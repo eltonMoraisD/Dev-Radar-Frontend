@@ -7,6 +7,7 @@ import './Sidebar.css';
 import './Main.css';
 
 function App() {
+	const [ devs, setDevs ] = useState([]);
 	const [ github_username, setGithubUsername ] = useState('');
 	const [ tech, setTech ] = useState('');
 
@@ -30,6 +31,16 @@ function App() {
 		);
 	}, []);
 
+	useEffect(() => {
+		async function loadDevs() {
+			const response = await api.get('/devs');
+
+			setDevs(response.data);
+		}
+
+		loadDevs();
+	}, []);
+
 	async function handleAddDev(e) {
 		e.preventDefault();
 
@@ -42,6 +53,8 @@ function App() {
 
 		setGithubUsername('');
 		setTech('');
+
+		setDevs([ ...devs, response.data ]);
 	}
 
 	return (
@@ -97,74 +110,19 @@ function App() {
 
 			<main>
 				<ul>
-					<li className="dev-item">
-						<header>
-							<img
-								src="https://avatars2.githubusercontent.com/u/39710764?s=460&u=7912ae5b1093e79f24c6f42bee54951a313d551d&v=4"
-								alt="avatar"
-							/>
-							<div className="user-info">
-								<strong>Elton Morais</strong>
-								<span>ReactJS, React Native, Node.js</span>
-							</div>
-						</header>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin pulvinar
-							sodales.
-						</p>
-						<a href="https://github.com/eltonMoraisD">Acessar perfil no github</a>
-					</li>
-					<li className="dev-item">
-						<header>
-							<img
-								src="https://avatars2.githubusercontent.com/u/39710764?s=460&u=7912ae5b1093e79f24c6f42bee54951a313d551d&v=4"
-								alt="avatar"
-							/>
-							<div className="user-info">
-								<strong>Elton Morais</strong>
-								<span>ReactJS, React Native, Node.js</span>
-							</div>
-						</header>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin pulvinar
-							sodales.
-						</p>
-						<a href="https://github.com/eltonMoraisD">Acessar perfil no github</a>
-					</li>
-					<li className="dev-item">
-						<header>
-							<img
-								src="https://avatars2.githubusercontent.com/u/39710764?s=460&u=7912ae5b1093e79f24c6f42bee54951a313d551d&v=4"
-								alt="avatar"
-							/>
-							<div className="user-info">
-								<strong>Elton Morais</strong>
-								<span>ReactJS, React Native, Node.js</span>
-							</div>
-						</header>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin pulvinar
-							sodales.
-						</p>
-						<a href="https://github.com/eltonMoraisD">Acessar perfil no github</a>
-					</li>
-					<li className="dev-item">
-						<header>
-							<img
-								src="https://avatars2.githubusercontent.com/u/39710764?s=460&u=7912ae5b1093e79f24c6f42bee54951a313d551d&v=4"
-								alt="avatar"
-							/>
-							<div className="user-info">
-								<strong>Elton Morais</strong>
-								<span>ReactJS, React Native, Node.js</span>
-							</div>
-						</header>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin pulvinar
-							sodales.
-						</p>
-						<a href="https://github.com/eltonMoraisD">Acessar perfil no github</a>
-					</li>
+					{devs.map((dev) => (
+						<li key={dev._id} className="dev-item">
+							<header>
+								<img src={dev.avatar_url} alt={dev.name} />
+								<div className="user-info">
+									<strong>{dev.name}</strong>
+									<span>{dev.tech.join(', ')}</span>
+								</div>
+							</header>
+							<p>{dev.bio}</p>
+							<a href={`https://github.com/${dev.github_username}`}>Acessar perfil no github</a>
+						</li>
+					))}
 				</ul>
 			</main>
 		</div>
